@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:alpine
+    command: ["postgres", "-c", "log_statement=all"]
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=user
+      - POSTGRES_DB=app
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    restart: unless-stopped
+  app:
+    image: app
+    build: .
+    ports:
+      - '9000:9000'
+    depends_on:
+      - db
+    restart: unless-stopped
